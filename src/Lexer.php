@@ -46,21 +46,15 @@ class Lexer
                 continue;
             }
 
-            if (isset($this->structuralTokenMap[$jToken])) {
-                $this->pushToken($this->structuralTokenMap[$jToken], $jToken);
-                $this->advance();
-                continue;
-            }
-
-            if (in_array($jToken, ["n", "t", "f"])) {
-                match ($jToken) {
-                    "n" => $this->lexNull(),
-                    "t" => $this->lexTrue(),
-                    "f" => $this->lexFalse(),
-                };
-
-                continue;
-            }
+            match ($jToken) {
+                "n" => $this->lexNull(),
+                "t" => $this->lexTrue(),
+                "f" => $this->lexFalse(),
+                "{", "}", ":", ",", "[", "]" => $this->lexStructuralToken(),
+                default => throw new \Exception(
+                    "Unhandled match condition while tokenizing",
+                ),
+            };
         } while ($this->needle < $this->jsonLength);
 
         return $this->tokens;
@@ -74,6 +68,14 @@ class Lexer
     private function advance(int $amount = 1): void
     {
         $this->needle += $amount;
+    }
+
+    private function lexStructuralToken(): void
+    {
+        $jToken = $this->jsonString[$this->needle];
+
+        $this->pushToken($this->structuralTokenMap[$jToken], $jToken);
+        $this->advance();
     }
 
     private function lexNull(): void
