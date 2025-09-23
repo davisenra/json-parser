@@ -46,14 +46,19 @@ class Lexer
                 continue;
             }
 
-            if ($jToken === "n") {
-                $this->lexNull();
-                continue;
-            }
-
             if (isset($this->structuralTokenMap[$jToken])) {
                 $this->pushToken($this->structuralTokenMap[$jToken], $jToken);
                 $this->advance();
+                continue;
+            }
+
+            if (in_array($jToken, ["n", "t", "f"])) {
+                match ($jToken) {
+                    "n" => $this->lexNull(),
+                    "t" => $this->lexTrue(),
+                    "f" => $this->lexFalse(),
+                };
+
                 continue;
             }
         } while ($this->needle < $this->jsonLength);
@@ -73,14 +78,47 @@ class Lexer
 
     private function lexNull(): void
     {
-        $isValidNullToken =
+        $isValidToken =
             $this->jsonString[$this->needle + 1] === "u" &&
             $this->jsonString[$this->needle + 2] === "l" &&
             $this->jsonString[$this->needle + 3] === "l";
 
-        if ($isValidNullToken) {
+        if ($isValidToken) {
             $this->pushToken(TokenType::Null, "null");
             $this->advance(4);
+            return;
+        }
+
+        // TODO: throw an error here
+    }
+
+    private function lexTrue(): void
+    {
+        $isValidToken =
+            $this->jsonString[$this->needle + 1] === "r" &&
+            $this->jsonString[$this->needle + 2] === "u" &&
+            $this->jsonString[$this->needle + 3] === "e";
+
+        if ($isValidToken) {
+            $this->pushToken(TokenType::True, "true");
+            $this->advance(4);
+            return;
+        }
+
+        // TODO: throw an error here
+    }
+
+    private function lexFalse(): void
+    {
+        $isValidToken =
+            $this->jsonString[$this->needle + 1] === "a" &&
+            $this->jsonString[$this->needle + 2] === "l" &&
+            $this->jsonString[$this->needle + 3] === "s" &&
+            $this->jsonString[$this->needle + 4] === "e";
+
+        if ($isValidToken) {
+            $this->pushToken(TokenType::False, "false");
+            $this->advance(5);
             return;
         }
 
