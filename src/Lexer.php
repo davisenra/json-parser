@@ -80,7 +80,7 @@ class Lexer
         $tokenValue = "";
         $stringIndex = 0;
 
-        do {
+        while (true) {
             $currentChar = $this->jsonString[$this->needle + $stringIndex] ?? null;
             $nextChar = $this->jsonString[$this->needle + $stringIndex + 1] ?? null;
 
@@ -101,6 +101,11 @@ class Lexer
             }
 
             if ($currentChar === null) {
+                // We've reached the end of the file and a closing quote was not found
+                if ($this->needle + $stringIndex === $this->jsonLength) {
+                    throw new \Exception("Unclosed string at position: {$this->needle}");
+                }
+
                 $this->pushToken(TokenType::String, $tokenValue);
                 $this->advance($stringIndex + 1);
                 return;
@@ -148,7 +153,7 @@ class Lexer
 
             $tokenValue .= $currentChar;
             $stringIndex++;
-        } while ($currentChar !== null);
+        }
     }
 
     private function lexNumber(): void

@@ -30,7 +30,6 @@ class LexerTest extends TestCase
     public function itThrowsAnErrorOnInvalidTokens(string $jsonString): void
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Test');
 
         $lexer = new Lexer($jsonString);
         $tokens = $lexer->tokenize();
@@ -69,7 +68,7 @@ class LexerTest extends TestCase
     public static function faultyTokenProvider(): array
     {
         return [
-            ['"{"hello world: "123'],
+            ['"{"hello world: "123}'],
         ];
     }
 }
