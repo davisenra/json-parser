@@ -18,8 +18,17 @@
       "name": "Davi Senra"
     }
   ],
+  "scripts": {
+    "format": "vendor/bin/mago format src tests"
+  },
   "require-dev": {
     "phpunit/phpunit": "^12.3",
-    "symfony/var-dumper": "^7.3"
+    "symfony/var-dumper": "^7.3",
+    "carthage-software/mago": "^1.0.0-beta.26"
+  },
+  "config": {
+    "allow-plugins": {
+      "carthage-software/mago": true
+    }
   }
 }

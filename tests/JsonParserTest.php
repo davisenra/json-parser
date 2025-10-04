@@ -17,6 +17,6 @@ class JsonParserTest extends TestCase
         $output = $parser->parse('{"hello":"world"}');
 
         $this->assertIsObject($output);
-        $this->assertEquals("world", $output->hello);
+        $this->assertEquals('world', $output->hello);
     }
 }

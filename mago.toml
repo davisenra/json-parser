@@ -1,0 +1,6 @@
+[formatter]
+print-width = 120
+use-tabs = false
+single-quote = true
+trailing-comma = true
+array-table-style-alignment = true
